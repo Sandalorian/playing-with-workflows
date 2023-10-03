@@ -1,3 +1,4 @@
 FROM curlimages/curl
 
 # We should do something here!
+# May be some docker build commands
