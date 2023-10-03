@@ -1,16 +1,17 @@
 name: Start pr from topic branch workflow
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: 
+      - 'opened'
+      - 'synchronize'
     branches:
-      - 'feature/**'
-      - 'bugfix/**'
-      - 'hotfix/**'
+      - 'main'
     paths:
       - 'docker/myimage/**'
 
 jobs:
-  dump_contexts_to_log:
+  run_if:
+    if: startsWith(github.head_ref, 'feature/')
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
