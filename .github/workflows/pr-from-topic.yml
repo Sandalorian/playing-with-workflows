@@ -57,7 +57,10 @@ jobs:
   
   run_a_check_on_changed_file_list:
     needs: get_changed_files
-    if: contains('docker/myimage/', needs.get_changed_files.outputs.changed_file_list)
+    # if: contains('docker/myimage/', needs.get_changed_files.outputs.changed_file_list)
     runs-on: ubuntu-latest
     steps:
-      - run: echo "We have a change in "docker/myimage/"
+      - name: print change file list
+        env: 
+          LIST: ${{ needs.get_changed_files.outputs.changed_file_list }}
+        run: echo "changed file list $LIST"
