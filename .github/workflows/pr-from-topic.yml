@@ -61,6 +61,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: print change file list
-        env: 
-          LIST: ${{ needs.get_changed_files.outputs.changed_file_list }}
-        run: echo "changed file list $LIST"
+        run: echo "We have found a change in the myimage docker folder"
