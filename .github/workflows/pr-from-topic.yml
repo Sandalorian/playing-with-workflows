@@ -61,10 +61,12 @@ jobs:
         id: get_changed_files_list
         run: echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
   
-  run_a_check_on_changed_file_list:
+  is_debug_conf_changed:
     needs: get_changed_files
-    if: contains('docker/myimage/', ${{ needs.get_changed_files.outputs.changed_file_list }})
+    if: |
+      contains('volumes/logstash/pipeline/debug_logs/', ${{ needs.get_changed_files.outputs.changed_file_list }}) ||
+      contains('volumes/logstash/scripts/debug_logs/', ${{ needs.get_changed_files.outputs.changed_file_list }})   
     runs-on: ubuntu-latest
     steps:
       - name: print change file list
-        run: echo "We have found a change in the myimage docker folder"
+        run: echo "We have found a change in the debug conf folder"
