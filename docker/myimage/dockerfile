@@ -1,3 +1,4 @@
 FROM curlimages/curl
 
 # We need to work on this file 
+# Maybe we could add some build steps?
