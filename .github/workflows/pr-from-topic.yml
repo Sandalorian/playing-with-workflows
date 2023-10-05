@@ -44,6 +44,8 @@ jobs:
   check_if_head_is_topic:
     if: startsWith(github.head_ref, 'feature/') ||  startsWith(github.head_ref, 'hotfix/') ||  startsWith(github.head_ref, 'bugfix/')
     runs-on: ubuntu-latest
+    steps:
+      - run: echo "This is a topic branch"
 
   get_changed_files:
     needs: check_if_head_is_topic
