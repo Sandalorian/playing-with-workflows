@@ -41,8 +41,12 @@ jobs:
           MATRIX_CONTEXT: ${{ toJson(matrix) }}
         run: echo "$MATRIX_CONTEXT"
 
-  get_changed_files:
+  check_if_head_is_topic:
     if: startsWith(github.head_ref, 'feature/') ||  startsWith(github.head_ref, 'hotfix/') ||  startsWith(github.head_ref, 'bugfix/')
+    runs-on: ubuntu-latest
+
+  get_changed_files:
+    needs: check_if_head_is_topic
     runs-on: ubuntu-latest
     outputs:
       changed_file_list: ${{ steps.get_changed_files_list.outputs.changed_files }}
