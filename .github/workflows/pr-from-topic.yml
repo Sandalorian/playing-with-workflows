@@ -7,9 +7,13 @@ on:
     branches:
       - 'main'
     paths:
-      - 'docker/myimage/**'
-      - 'docker/theotherone/**'
-      - 'docker/thisone/**'
+      - 'docker/debug/**'
+      - 'docker/metrics/**'
+      - 'docker/query/**'
+      - 'volumes/logstash/pipeline/debug_logs/**'
+      - 'volumes/logstash/pipeline/metrics/**'
+      - 'volumes/logstash/pipeline/query_logs/**'
+      - 'volumes/logstash/scripts/debug_logs/**'
 
 jobs:
   run_if:
