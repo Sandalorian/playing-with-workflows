@@ -99,9 +99,10 @@ jobs:
   run_logstash_conf_test:
     needs: [is_debug_conf_changed, is_metrics_conf_changed, is_query_conf_changed]
     if: |
-      contains(needs.is_debug_conf_changed.result, 'success') 
+      ${{ always() }} 
+      && ( contains(needs.is_debug_conf_changed.result, 'success') 
       || contains(needs.is_metrics_conf_changed.result, 'success')
-      || contains(needs.is_query_conf_changed.result, 'success')
+      || contains(needs.is_query_conf_changed.result, 'success'))
     runs-on: ubuntu-latest
     steps:
       - name: Print needs
