@@ -63,7 +63,7 @@ jobs:
           echo "folders_matrix=$(ls $LOGSTASH_PIPELINE_CONFS |jq -cnR '[inputs | select(length>0)]')" >> $GITHUB_OUTPUT
 
   print_pipeline_matrix:
-    needs: setup_lggstash_pipeline_folders
+    needs: get_logstash_pipeline_folders
     runs-on: ubuntu-latest
     steps:
       - run: echo "toJSON(needs) = ${{ toJSON(needs) }}"
