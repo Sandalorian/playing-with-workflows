@@ -80,8 +80,8 @@ jobs:
   is_metrics_conf_changed:
     needs: get_changed_files
     if: |
-      contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/pipeline/metrics_logs/') ||
-      contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/scripts/metrics_logs/')
+      contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/pipeline/metrics/') ||
+      contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/scripts/metrics/')
     runs-on: ubuntu-latest
     steps:
       - name: Start test of changed metrics conf
