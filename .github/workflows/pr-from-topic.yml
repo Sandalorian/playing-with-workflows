@@ -62,23 +62,40 @@ jobs:
         run: |
           echo "folders_matrix=$(ls $LOGSTASH_PIPELINE_CONFS |jq -cnR '[inputs | select(length>0)]')" >> $GITHUB_OUTPUT
 
-  print_pipeline_matrix:
-    needs: get_logstash_pipeline_folders
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "toJSON(needs) = ${{ toJSON(needs) }}"
+  # This following can be used to print out the output object from the needs job.
+  #
+  # print_pipeline_matrix:
+  #   needs: get_logstash_pipeline_folders
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: echo "toJSON(needs) = ${{ toJSON(needs) }}"
+  #
+  # An example of what this will printout is
+  # ```
+  #   toJSON(needs) = {
+  #   get_logstash_pipeline_folders: {
+  #     result: success,
+  #     outputs: {
+  #       matrix: ["debug_logs","metrics","query_logs"]
+  #     }
+  #   }
+  # }
+  # ```
 
 
   run_logstash_conf_test:
-    needs: [check_if_head_is_topic]
+    needs: [get_logstash_pipeline_folders]
     runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        folders: ${{ fromJson(needs.get_logstash_pipeline_folders.outputs.matrix) }}
     steps:
-      - name: run logstash test on all pipelines
+      - name: run logstash test on ${{ matrix.folders }} pipeline
         run: |
           docker run --name=logstash-tester --rm -t \
           --volume=$PWD/logstash/pipeline/:/usr/share/logstash/pipeline/ \
           --volume=$PWD/logstash/scripts:/home/logstash/scripts \
-          docker.elastic.co/logstash/logstash:8.10.0 bash -c 'logstash --config.test_and_exit -f /usr/share/logstash/pipeline/debug_logs;exit_code=$?;test $exit_code -eq 0 && exit 0 || exit 1;'
+          docker.elastic.co/logstash/logstash:8.10.0 bash -c 'logstash --config.test_and_exit -f $LOGSTASH_PIPELINE_CONFS${{ matrix.folders }};exit_code=$?;test $exit_code -eq 0 && exit 0 || exit 1;'
 
   get_changed_files:
     needs: run_logstash_conf_test
