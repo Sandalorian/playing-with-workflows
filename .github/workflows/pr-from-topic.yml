@@ -80,8 +80,8 @@ jobs:
   is_metrics_conf_changed:
     needs: get_changed_files
     if: |
-      contains('volumes/logstash/pipeline/metrics/', ${{ needs.get_changed_files.outputs.changed_file_list }}) ||
-      contains('volumes/logstash/scripts/metrics/', ${{ needs.get_changed_files.outputs.changed_file_list }})   
+      contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/pipeline/metrics_logs/') ||
+      contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/scripts/metrics_logs/')
     runs-on: ubuntu-latest
     steps:
       - name: Start test of changed metrics conf
@@ -90,8 +90,8 @@ jobs:
   is_query_conf_changed:
     needs: get_changed_files
     if: |
-      contains('volumes/logstash/pipeline/query_logs/', ${{ needs.get_changed_files.outputs.changed_file_list }}) ||
-      contains('volumes/logstash/scripts/query_logs/', ${{ needs.get_changed_files.outputs.changed_file_list }})   
+      contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/pipeline/query_logs/') ||
+      contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/scripts/query_logs/')
     runs-on: ubuntu-latest
     steps:
       - name: Start test of changed query conf
