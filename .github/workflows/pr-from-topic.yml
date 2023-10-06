@@ -75,7 +75,6 @@ jobs:
       - name: Start test of changed debug conf
         run: |
           echo "We have found a change in the debug conf folder"
-          echo "${{ needs.get_changed_files.outputs.changed_file_list }}"
 
   is_metrics_conf_changed:
     needs: get_changed_files
@@ -97,3 +96,9 @@ jobs:
       - name: Start test of changed query conf
         run: echo "We have found a change in the query conf folder"
     
+  run_logstash_conf_test:
+    needs: [is_debug_conf_changed, is_metrics_conf_changed, is_query_conf_changed]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print needs
+        run: echo "toJSON(needs) = ${{ toJSON(needs) }}"
