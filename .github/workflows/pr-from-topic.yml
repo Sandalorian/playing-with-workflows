@@ -55,7 +55,7 @@ jobs:
     steps:
       - name: run logstash test on all pipelines
         run: |
-          docker run --name=logstash-tester --rm -it \
+          docker run --name=logstash-tester --rm -t \
           --volume=$PWD/logstash/pipeline/:/usr/share/logstash/pipeline/ \
           --volume=$PWD/logstash/scripts:/home/logstash/scripts \
           docker.elastic.co/logstash/logstash:8.10.0 bash -c 'logstash --config.test_and_exit -f /usr/share/logstash/pipeline/debug_logs;exit_code=$?;test $exit_code -eq 0 && exit 0 || exit 1;'
