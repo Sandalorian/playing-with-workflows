@@ -60,7 +60,7 @@ jobs:
       - uses: actions/checkout@v3
       - id: get_pipeline_folders
         run: |
-          echo "folders_matrix=$(ls $LOGSTASH_PIPELINE_CONFS |jq -cnR '[inputs | select(length>0)]')" >> "GITHUB_OUTPUTS"
+          echo "folders_matrix=$(ls $LOGSTASH_PIPELINE_CONFS |jq -cnR '[inputs | select(length>0)]')" >> "GITHUB_OUTPUT"
 
   print_pipeline_matrix:
     needs: setup_lggstash_pipeline_folders
