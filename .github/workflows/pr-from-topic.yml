@@ -98,6 +98,7 @@ jobs:
     
   run_logstash_conf_test:
     needs: [is_debug_conf_changed, is_metrics_conf_changed, is_query_conf_changed]
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
       - name: Print needs
