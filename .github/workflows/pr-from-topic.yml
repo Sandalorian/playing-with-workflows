@@ -51,11 +51,11 @@ jobs:
     steps:
       - run: echo "This is a topic branch"
 
-  setup_lggstash_pipeline_folders:
+  get_logstash_pipeline_folders:
     needs: check_if_head_is_topic
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.get_pipeline_folders.output.folders_matrix }}
+      matrix: ${{ steps.get_pipeline_folders.outputs.folders_matrix }}
     steps:
       - uses: actions/checkout@v3
       - id: get_pipeline_folders
