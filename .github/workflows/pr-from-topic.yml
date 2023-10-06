@@ -9,6 +9,8 @@ on:
     paths:
       - 'docker/**'
       - 'logstash/**'
+env:
+  LOGSTASH_PIPELINE_CONFS: 'logstash/pipeline/'
 
 jobs:
   run_if:
@@ -48,6 +50,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "This is a topic branch"
+
+  setup_lggstash_pipeline_folders:
+    needs: check_if_head_is_topic
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.get_pipeline_folders.output.folders_matrix }}
+    steps:
+      - uses: actions/checkout@v3
+      - id: get_pipeline_folders
+        run: |
+          echo "folders_matrix=$(ls $LOGSTASH_PIPELINE_CONFS |jq -cnR '[inputs | select(length>0)]')" >> "GITHUB_OUTPUTS"
+
+  print_pipeline_matrix:
+    needs: setup_lggstash_pipeline_folders
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "${{ needs }}"
+
 
   run_logstash_conf_test:
     needs: [check_if_head_is_topic]
