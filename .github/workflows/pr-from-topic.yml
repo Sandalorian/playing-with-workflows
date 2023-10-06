@@ -68,7 +68,12 @@ jobs:
   is_debug_conf_changed:
     needs: get_changed_files
     if: |
+<<<<<<< HEAD
       contains(${{ needs.get_changed_files.outputs.changed_file_list }}, 'debug_logs')
+=======
+      contains(${{ needs.get_changed_files.outputs.changed_file_list }}, 'volumes/logstash/pipeline/debug_logs/') ||
+      contains(${{ needs.get_changed_files.outputs.changed_file_list }}, 'volumes/logstash/scripts/debug_logs/')   
+>>>>>>> 4e5887a (debugging workfolw)
     runs-on: ubuntu-latest
     steps:
       - name: Start test of changed debug conf
