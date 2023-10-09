@@ -90,13 +90,14 @@ jobs:
       matrix: 
         folders: ${{ fromJson(needs.get_logstash_pipeline_folders.outputs.matrix) }}
     steps:
+      - uses: actions/checkout@v3
       - name: run logstash test on ${{ matrix.folders }} pipeline
         run: |
-          echo "Running test on ${{ env.LOGSTASH_PIPELINE_CONFS }}/${{ matrix.folders }}"
+          echo "Running test on ${{ env.LOGSTASH_PIPELINE_CONFS }}${{ matrix.folders }}"
           docker run --name=logstash-tester --rm -t \
           --volume=$PWD/logstash/pipeline/:/usr/share/logstash/pipeline/ \
           --volume=$PWD/logstash/scripts:/home/logstash/scripts \
-          docker.elastic.co/logstash/logstash:8.10.0 bash -c 'logstash --config.test_and_exit -f ${{ env.LOGSTASH_PIPELINE_CONFS }}/${{ matrix.folders }};exit_code=$?;test $exit_code -eq 0 && exit 0 || exit 1;'
+          docker.elastic.co/logstash/logstash:8.10.0 bash -c 'logstash --config.test_and_exit -f pipeline/${{ matrix.folders }};exit_code=$?;test $exit_code -eq 0 && exit 0 || exit 1;'
 
   get_changed_files:
     needs: run_logstash_conf_test
