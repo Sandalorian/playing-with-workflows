@@ -53,17 +53,23 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       # We use this step to generate a list of subfolders under LOGSTASH_PIPELINE_FOLDER
-      # - id: pipeline_folders
-      #   name: get_pipeline_folders
-      #   run: echo "list=$(ls $LOGSTASH_PIPELINE_FOLDER)" >> $GITHUB_OUTPUT
-      #   # Once we have this list we can check if any of the changed files in the PR fall under the subfolder
+      # Once we have this list we can check if any of the changed files in the PR fall under the subfolder
       - id: changed_files_in_pr
         uses: tj-actions/changed-files@v39
       - name: Compare pipeline folders with change files in pr
         id: images_to_build
         run: |
+          result='['
           for d in $(ls $LOGSTASH_PIPELINE_FOLDER); do 
-            if echo ${{ steps.changed_files_in_pr.outputs.all_changed_and_modified_files }} | grep -q $d; then echo "$d"; fi; done
+            if echo ${{ steps.changed_files_in_pr.outputs.all_changed_and_modified_files }} | grep -q $d; then 
+              result="$result\"$d\","; 
+            fi; 
+          done
+          # Remove the trailing comma
+          result="${result%,}"
+          # Add closing bracket
+          result="$result]"
+          echo "matrix=$result" >> $GITHUB_OUTPUT
 
   # get_logstash_pipeline_folders:
   #   needs: check_if_head_is_topic
