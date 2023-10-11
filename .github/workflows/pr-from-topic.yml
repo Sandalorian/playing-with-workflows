@@ -53,10 +53,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       # We use this step to generate a list of subfolders under LOGSTASH_PIPELINE_FOLDER
-      - id: pipeline_folders
-        name: get_pipeline_folders
-        run: echo "list=$(ls $LOGSTASH_PIPELINE_FOLDER)" >> $GITHUB_OUTPUT
-        # Once we have this list we can check if any of the changed files in the PR fall under the subfolder
+      # - id: pipeline_folders
+      #   name: get_pipeline_folders
+      #   run: echo "list=$(ls $LOGSTASH_PIPELINE_FOLDER)" >> $GITHUB_OUTPUT
+      #   # Once we have this list we can check if any of the changed files in the PR fall under the subfolder
       - id: changed_files_in_pr
         uses: tj-actions/changed-files@v39
       - name: Compare pipeline folders with change files in pr
