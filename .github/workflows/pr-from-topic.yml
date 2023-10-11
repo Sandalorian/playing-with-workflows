@@ -44,107 +44,129 @@ jobs:
           MATRIX_CONTEXT: ${{ toJson(matrix) }}
         run: echo "$MATRIX_CONTEXT"
 
-  check_if_head_is_topic:
+  check_if_topic_and_process_pipeline_builds:
     if: |
       startsWith(github.head_ref, 'feature/') 
       ||  startsWith(github.head_ref, 'hotfix/') 
       ||  startsWith(github.head_ref, 'bugfix/')
     runs-on: ubuntu-latest
     steps:
-      - run: echo "This is a topic branch"
-
-  get_logstash_pipeline_folders:
-    needs: check_if_head_is_topic
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.get_pipeline_folders.outputs.folders_matrix }}
-    steps:
       - uses: actions/checkout@v3
-      - id: get_pipeline_folders
-        run: |
-          echo "folders_matrix=$(ls $LOGSTASH_PIPELINE_FOLDER |jq -cnR '[inputs | select(length>0)]')" >> $GITHUB_OUTPUT
-
-  # This following can be used to print out the output object from the needs job.
-  #
-  # print_pipeline_matrix:
-  #   needs: get_logstash_pipeline_folders
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - run: echo "toJSON(needs) = ${{ toJSON(needs) }}"
-  #
-  # An example of what this will printout is
-  # ```
-  #   toJSON(needs) = {
-  #   get_logstash_pipeline_folders: {
-  #     result: success,
-  #     outputs: {
-  #       matrix: ["debug_logs","metrics","query_logs"]
-  #     }
-  #   }
-  # }
-  # ```
-
-
-  get_changed_files:
-    needs: check_if_head_is_topic
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - id: changed-files
+      # We use this step to generate a list of subfolders under LOGSTASH_PIPELINE_FOLDER
+      - id: pipeline_folders
+        name: get_pipeline_folders
+        run: echo "list=$(ls $LOGSTASH_PIPELINE_FOLDER)" >> $GITHUB_OUTPUT
+        # Once we have this list we can check if any of the changed files in the PR fall under the subfolder
+      - id: changed_files_in_pr
         uses: tj-actions/changed-files@v39
-        with:
-          json: "true"
-      - name: List all changed files
+      - name: Compare pipeline folders with change files in pr
+        id: images_to_build
         run: |
-          echo '${{ steps.changed-files.outputs.all_changed_files }}'
+          for d in $(ls $LOGSTASH_PIPELINE_FOLDER); do 
+            if echo ${{ steps.changed_files_in_pr.outputs.all_changed_and_modified_files }} | grep -q $d; then echo "$d"; fi; done
 
-  run_logstash_conf_test:
-    needs: [get_logstash_pipeline_folders]
-    runs-on: ubuntu-latest
-    strategy:
-      matrix: 
-        folders: ${{ fromJson(needs.get_logstash_pipeline_folders.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: run logstash test on ${{ matrix.folders }} pipeline
-        run: |
-          echo "Running test on ${{ env.LOGSTASH_PIPELINE_FOLDER }}${{ matrix.folders }}"
-          docker run --name=logstash-tester --rm -t \
-          --volume=$PWD/${{ env.LOGSTASH_PIPELINE_FOLDER }}:/usr/share/logstash/pipeline/ \
-          --volume=$PWD/${{ env.LOGSTASH_PIPELINE_SCRIPTS }}:/home/logstash/scripts \
-          docker.elastic.co/logstash/logstash:8.10.0 bash -c 'logstash --config.test_and_exit -f pipeline/${{ matrix.folders }};exit_code=$?;test $exit_code -eq 0 && exit 0 || exit 1;'
+  # get_logstash_pipeline_folders:
+  #   needs: check_if_head_is_topic
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     matrix: ${{ steps.get_pipeline_folders.outputs.folders_matrix }}
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - id: get_pipeline_folders
+  #       run: |
+  #         echo "folders_matrix=$(ls $LOGSTASH_PIPELINE_FOLDER |jq -cnR '[inputs | select(length>0)]')" >> $GITHUB_OUTPUT
+
+  # # This following can be used to print out the output object from the needs job.
+  # #
+  # # print_pipeline_matrix:
+  # #   needs: get_logstash_pipeline_folders
+  # #   runs-on: ubuntu-latest
+  # #   steps:
+  # #     - run: echo "toJSON(needs) = ${{ toJSON(needs) }}"
+  # #
+  # # An example of what this will printout is
+  # # ```
+  # #   toJSON(needs) = {
+  # #   get_logstash_pipeline_folders: {
+  # #     result: success,
+  # #     outputs: {
+  # #       matrix: ["debug_logs","metrics","query_logs"]
+  # #     }
+  # #   }
+  # # }
+  # # ```
+
+
+  # get_changed_files:
+  #   needs: check_if_head_is_topic
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     file_list: ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
+  #     - id: changed-files
+  #       uses: tj-actions/changed-files@v39
+  #       with:
+  #         json: "true"
+  #     - name: List all changed files
+  #       run: |
+  #         echo '${{ steps.changed-files.outputs.all_changed_files }}'
+  
+  # run_build_for_changed_conf_files:
+  #   needs: [get_changed_files, get_logstash_pipeline_folders]
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix: 
+  #       folders: ${{ fromJson(needs.get_logstash_pipeline_folders.outputs.matrix) }}
+  #   if 
+
+  # run_logstash_conf_test:
+  #   needs: [get_logstash_pipeline_folders]
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix: 
+  #       folders: ${{ fromJson(needs.get_logstash_pipeline_folders.outputs.matrix) }}
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: run logstash test on ${{ matrix.folders }} pipeline
+  #       run: |
+  #         echo "Running test on ${{ env.LOGSTASH_PIPELINE_FOLDER }}${{ matrix.folders }}"
+  #         docker run --name=logstash-tester --rm -t \
+  #         --volume=$PWD/${{ env.LOGSTASH_PIPELINE_FOLDER }}:/usr/share/logstash/pipeline/ \
+  #         --volume=$PWD/${{ env.LOGSTASH_PIPELINE_SCRIPTS }}:/home/logstash/scripts \
+  #         docker.elastic.co/logstash/logstash:8.10.0 bash -c 'logstash --config.test_and_exit -f pipeline/${{ matrix.folders }};exit_code=$?;test $exit_code -eq 0 && exit 0 || exit 1;'
 
   
-  is_debug_conf_changed:
-    needs: get_changed_files
-    if: |
-      contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/pipeline/debug_logs/') ||
-      contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/scripts/debug_logs/')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Start test of changed debug conf
-        run: |
-          echo "We have found a change in the debug conf folder"
+  # is_debug_conf_changed:
+  #   needs: get_changed_files
+  #   if: |
+  #     contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/pipeline/debug_logs/') ||
+  #     contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/scripts/debug_logs/')
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Start test of changed debug conf
+  #       run: |
+  #         echo "We have found a change in the debug conf folder"
 
-  is_metrics_conf_changed:
-    needs: get_changed_files
-    if: |
-      contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/pipeline/metrics/') ||
-      contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/scripts/metrics/')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Start test of changed metrics conf
-        run: echo "We have found a change in the metrics conf folder"
+  # is_metrics_conf_changed:
+  #   needs: get_changed_files
+  #   if: |
+  #     contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/pipeline/metrics/') ||
+  #     contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/scripts/metrics/')
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Start test of changed metrics conf
+  #       run: echo "We have found a change in the metrics conf folder"
 
-  is_query_conf_changed:
-    needs: get_changed_files
-    if: |
-      contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/pipeline/query_logs/') ||
-      contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/scripts/query_logs/')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Start test of changed query conf
-        run: echo "We have found a change in the query conf folder"
+  # is_query_conf_changed:
+  #   needs: get_changed_files
+  #   if: |
+  #     contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/pipeline/query_logs/') ||
+  #     contains(needs.get_changed_files.outputs.changed_file_list, 'volumes/logstash/scripts/query_logs/')
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Start test of changed query conf
+  #       run: echo "We have found a change in the query conf folder"
     
