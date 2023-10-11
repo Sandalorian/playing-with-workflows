@@ -79,16 +79,13 @@ jobs:
     strategy:
       matrix: 
         folders: ${{ fromJson(needs.check_if_topic_and_get_pipelines_to_build.outputs.matrix) }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: print folders
-        run: echo "building ${{ matrix.folders }}"
-    # uses: ./.github/workflows/build-logstash-images.yml
-    # with:
-    #   dockerfile: ./docker/synlig-ls-debug/Dockerfile
-    #   image_name: debug
-    #   context: ./docker/synlig-ls-debug
-    # secrets: inherit
+    uses: ./.github/workflows/build-logstash-images.yml
+    with:
+      dockerfile: ./logstash/dockerfile
+      image_name: ${{ matrix.folders }}
+      context: logstash/pipeline/${{ matrix.folders }}
+      repository_name: ${{ env.REPOSITORY_NAME_DEV }}
+    secrets: inherit
 
 
   # get_logstash_pipeline_folders:
