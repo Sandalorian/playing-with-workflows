@@ -1,0 +1,7 @@
+ARG ELK_VERSION
+FROM logstash:${ELK_VERSION}
+
+ARG PIPELINE_LOCATION
+
+COPY ./pipeline/${PIPELINE_LOCATION} /usr/share/logstash/pipeline/
+COPY ./pipeline/${PIPELINE_LOCATION}/scripts /home/logstash/scripts/
