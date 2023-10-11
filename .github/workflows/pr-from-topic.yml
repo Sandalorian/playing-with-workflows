@@ -44,19 +44,21 @@ jobs:
           MATRIX_CONTEXT: ${{ toJson(matrix) }}
         run: echo "$MATRIX_CONTEXT"
 
-  check_if_topic_and_process_pipeline_builds:
+  check_if_topic_and_get_pipelines_to_build:
     if: |
       startsWith(github.head_ref, 'feature/') 
       ||  startsWith(github.head_ref, 'hotfix/') 
       ||  startsWith(github.head_ref, 'bugfix/')
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.images_to_build.outputs.matrix }}
     steps:
       - uses: actions/checkout@v3
-      # We use this step to generate a list of subfolders under LOGSTASH_PIPELINE_FOLDER
-      # Once we have this list we can check if any of the changed files in the PR fall under the subfolder
       - id: changed_files_in_pr
         uses: tj-actions/changed-files@v39
       - name: Compare pipeline folders with change files in pr
+        # We use this step to generate an string of container names that need to be built.
+        # The output of this stage can the be converted to a matrix to build the images.
         id: images_to_build
         run: |
           result='['
@@ -70,6 +72,24 @@ jobs:
           # Add closing bracket
           result="$result]"
           echo "matrix=$result" >> $GITHUB_OUTPUT
+
+  
+  run_build_for_pipeline_images:
+    needs: [check_if_topic_and_get_pipelines_to_build]
+    strategy:
+      matrix: 
+        folders: ${{ fromJson(needs.check_if_topic_and_get_pipelines_to_build.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: print folders
+        run: echo "building ${{ matrix.folders }}"
+    # uses: ./.github/workflows/build-logstash-images.yml
+    # with:
+    #   dockerfile: ./docker/synlig-ls-debug/Dockerfile
+    #   image_name: debug
+    #   context: ./docker/synlig-ls-debug
+    # secrets: inherit
+
 
   # get_logstash_pipeline_folders:
   #   needs: check_if_head_is_topic
@@ -119,14 +139,6 @@ jobs:
   #     - name: List all changed files
   #       run: |
   #         echo '${{ steps.changed-files.outputs.all_changed_files }}'
-  
-  # run_build_for_changed_conf_files:
-  #   needs: [get_changed_files, get_logstash_pipeline_folders]
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix: 
-  #       folders: ${{ fromJson(needs.get_logstash_pipeline_folders.outputs.matrix) }}
-  #   if 
 
   # run_logstash_conf_test:
   #   needs: [get_logstash_pipeline_folders]
