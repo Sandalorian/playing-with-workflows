@@ -65,7 +65,10 @@ jobs:
       - name: Push
         uses: docker/build-push-action@v5
         with: 
-          file: '${{ inputs.dockerfile }}'
           context: '${{ inputs.context }}'
+          file: '${{ inputs.dockerfile }}'
+          build-args: |
+            ELK_VERSION=${{ vars.ELK_VERSION }}
+            PIPELINE_LOCATION=${{ inputs.image_name }}
           push: true
           tags: ${{ env.LATEST_TAG }}
