@@ -12,7 +12,7 @@ on:
 env:
   LOGSTASH_PIPELINE_FOLDER: 'logstash/pipeline/'
   LOGSTASH_PIPELINE_SCRIPTS: 'logstash/scripts/'
-  LOGSTASH_VERSION: ${{ vars.ELK_VERSION }}
+  REPOSITORY_NAME_DEV: ${{ vars.REPOSITORY_NAME_DEV }}
 
 jobs:
   run_if:
@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.images_to_build.outputs.matrix }}
-      repository_name: ${{ vars.REGISTRY_NAME_DEV }}
+      repository_name: ${{ env.REPOSITORY_NAME_DEV }}
     steps:
       - uses: actions/checkout@v3
       - id: changed_files_in_pr
