@@ -11,38 +11,38 @@ on:
       - 'logstash/**'
 env:
   LOGSTASH_PIPELINE_FOLDER: 'logstash/pipeline/'
-  LOGSTASH_PIPELINE_SCRIPTS: 'logstash/scripts/'
+  # LOGSTASH_PIPELINE_SCRIPTS: 'logstash/scripts/'
   REPOSITORY_NAME_DEV: ${{ vars.REPOSITORY_NAME_DEV }}
 
 jobs:
-  run_if:
-    if: startsWith(github.head_ref, 'feature/') ||  startsWith(github.head_ref, 'hotfix/') ||  startsWith(github.head_ref, 'bugfix/')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: Dump job context
-        env:
-          JOB_CONTEXT: ${{ toJson(job) }}
-        run: echo "$JOB_CONTEXT"
-      - name: Dump steps context
-        env:
-          STEPS_CONTEXT: ${{ toJson(steps) }}
-        run: echo "$STEPS_CONTEXT"
-      - name: Dump runner context
-        env:
-          RUNNER_CONTEXT: ${{ toJson(runner) }}
-        run: echo "$RUNNER_CONTEXT"
-      - name: Dump strategy context
-        env:
-          STRATEGY_CONTEXT: ${{ toJson(strategy) }}
-        run: echo "$STRATEGY_CONTEXT"
-      - name: Dump matrix context
-        env:
-          MATRIX_CONTEXT: ${{ toJson(matrix) }}
-        run: echo "$MATRIX_CONTEXT"
+  # run_if:
+  #   if: startsWith(github.head_ref, 'feature/') ||  startsWith(github.head_ref, 'hotfix/') ||  startsWith(github.head_ref, 'bugfix/')
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Dump GitHub context
+  #       env:
+  #         GITHUB_CONTEXT: ${{ toJson(github) }}
+  #       run: echo "$GITHUB_CONTEXT"
+  #     - name: Dump job context
+  #       env:
+  #         JOB_CONTEXT: ${{ toJson(job) }}
+  #       run: echo "$JOB_CONTEXT"
+  #     - name: Dump steps context
+  #       env:
+  #         STEPS_CONTEXT: ${{ toJson(steps) }}
+  #       run: echo "$STEPS_CONTEXT"
+  #     - name: Dump runner context
+  #       env:
+  #         RUNNER_CONTEXT: ${{ toJson(runner) }}
+  #       run: echo "$RUNNER_CONTEXT"
+  #     - name: Dump strategy context
+  #       env:
+  #         STRATEGY_CONTEXT: ${{ toJson(strategy) }}
+  #       run: echo "$STRATEGY_CONTEXT"
+  #     - name: Dump matrix context
+  #       env:
+  #         MATRIX_CONTEXT: ${{ toJson(matrix) }}
+  #       run: echo "$MATRIX_CONTEXT"
 
   check_if_topic_and_get_pipelines_to_build:
     if: |
