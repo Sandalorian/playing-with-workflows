@@ -84,7 +84,7 @@ jobs:
       dockerfile: ./logstash/dockerfile
       image_name: ${{ matrix.folders }}
       context: .
-      repository_name: ${{ vars.REPOSITORY_NAME_DEV }}
+      repository_name: ${{ vars.REGISTRY_NAME_DEV }}
     secrets: inherit
 
 
