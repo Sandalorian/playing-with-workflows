@@ -60,7 +60,7 @@ jobs:
           tags: ${{ env.TEST_TAG }}
       - name: Test
         run: |
-          docker run -rm -t \
+          docker run --rm -t \
             ${{ env.TEST_TAG }} bash -c 'logstash --config.test_and_exit;exit_code=$?;test $exit_code -eq 0 && exit 0 || exit 1;'
       - name: Push
         uses: docker/build-push-action@v5
