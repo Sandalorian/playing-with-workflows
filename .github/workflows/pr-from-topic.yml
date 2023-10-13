@@ -52,6 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.images_to_build.outputs.matrix }}
+      repository_name: ${{ vars.REGISTRY_NAME_DEV }}
     steps:
       - uses: actions/checkout@v3
       - id: changed_files_in_pr
@@ -84,7 +85,7 @@ jobs:
       dockerfile: ./logstash/dockerfile
       image_name: ${{ matrix.folders }}
       context: .
-      repository_name: ${{ vars.REGISTRY_NAME_DEV }}
+      repository_name: ${{ needs.check_if_topic_and_get_pipelines_to_build.outputs.repository_name }}
     secrets: inherit
 
 
