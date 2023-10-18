@@ -4,4 +4,4 @@ FROM docker.elastic.co/logstash/logstash:${ELK_VERSION}
 ARG PIPELINE_LOCATION
 
 COPY ./logstash/pipeline/${PIPELINE_LOCATION}/*.conf /usr/share/logstash/pipeline/
-COPY ./logstash/pipeline/${PIPELINE_LOCATION}/*.rb /home/logstash/scripts/
+COPY ./logstash/scripts/ /usr/share/logstash/scripts/
