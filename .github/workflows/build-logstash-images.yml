@@ -18,7 +18,6 @@ on:
 
 env:
   TEST_TAG: ${{ secrets.REGISTRY_LOCATION }}/${{ secrets.PROJECT_ID }}/${{ inputs.repository_name }}/${{ inputs.image_name }}:test
-  LATEST_TAG: ${{ secrets.REGISTRY_LOCATION }}/${{ secrets.PROJECT_ID }}/${{ inputs.repository_name }}/${{ inputs.image_name }}:latest
 
 jobs:
 
@@ -82,9 +81,7 @@ jobs:
         with:
           images:
             ${{ secrets.REGISTRY_LOCATION }}/${{ secrets.PROJECT_ID }}/${{ inputs.repository_name }}/${{ inputs.image_name }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
+          tags: type=ref,event=pr
 
       - name: Build
         uses: docker/build-push-action@v5
