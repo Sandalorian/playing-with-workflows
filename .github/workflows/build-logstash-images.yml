@@ -76,6 +76,16 @@ jobs:
           gcloud auth configure-docker --quiet
           gcloud auth configure-docker ${{ secrets.REGISTRY_LOCATION }} --quiet
 
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images:
+            ${{ secrets.REGISTRY_LOCATION }}/${{ secrets.PROJECT_ID }}/${{ inputs.repository_name }}/${{ inputs.image_name }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+
       - name: Build
         uses: docker/build-push-action@v5
         with: 
@@ -100,4 +110,4 @@ jobs:
             ELK_VERSION=${{ vars.ELK_VERSION }}
             PIPELINE_LOCATION=${{ inputs.image_name }}
           push: true
-          tags: ${{ env.LATEST_TAG }}
+          tags: ${{ steps.meta.outputs.tags }}
