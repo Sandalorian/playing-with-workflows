@@ -21,7 +21,7 @@ jobs:
         id: extract_tag
         run: |
           echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          echo "The value of TAG_NAME it $TAG_NAME"
+          echo "The value of TAG_NAME it ${GITHUB_REF##*/}"
           echo "The value of GITHUB_REF_NAME is $GITHUB_REF_NAME"
       # - name: Get project.version
       #   # We get the current project.version
