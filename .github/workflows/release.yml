@@ -22,12 +22,11 @@ jobs:
         run: |
           echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
           echo "The value of TAG_NAME it ${{ env.TAG_NAME }}"
-          echo "The value of GITHUB_REF_NAME is $GITHUB_REF_NAME"
       - name: Verify tag matches project.version
         id: verify_tag
         run: |
           # Extract project.version from pom.xml
-          PROJECT_VERSION=$(xmllint --xpath "//*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
+          PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           # Get the tag name
           TAG_NAME=${{ env.TAG_NAME }}
           # Check if they match
