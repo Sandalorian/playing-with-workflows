@@ -1,5 +1,8 @@
 {
     "cSpell.words": [
         "softprops"
+    ],
+    "github-actions.workflows.pinned.workflows": [
+        ".github/workflows/release.yml"
     ]
 }
