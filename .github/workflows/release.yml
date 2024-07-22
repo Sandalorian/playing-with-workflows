@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - "cli/v*.*"
+env:
+  POM_FILE: 'cli/demo/pom.xml'
 
 jobs:
   build:
@@ -28,7 +30,7 @@ jobs:
           # extract just the version number from the tag name
           TAG_VERSION_NUMBER=$(echo $GITHUB_REF_NAME | sed 's|.*/v||')
           # Extract project.version from pom.xml
-          PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f cli/demo/pom.xml)
+          PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f $POM_FILE)
           # Check if they match
           if [ "$PROJECT_VERSION" != "$TAG_VERSION_NUMBER" ]; then
             echo "Tag name ($TAG_VERSION_NUMBER) does not match project.version ($PROJECT_VERSION)"
@@ -42,9 +44,9 @@ jobs:
       #     echo "project.version from pom: $VERSION"
       #     echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Test
-        run: mvn test -f cli/demo/pom.xml
+        run: mvn test -f $POM_FILE
       - name: Build
-        run: mvn clean package -f cli/demo/pom.xml
+        run: mvn clean package -f $POM_FILE
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
