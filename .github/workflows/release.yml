@@ -20,17 +20,15 @@ jobs:
       - name: Extract tag
         id: extract_tag
         run: |
-          FULL_TAG_NAME=${GITHUB_REF##*/}
-          # extract just the version number from the tag
-          TAG_VERSION_NUMBER=$(echo $FULL_TAG_NAME | sed 's|.*/v||')
+
           echo "TAG_VERSION_NUMBER=${TAG_VERSION_NUMBER}" >> $GITHUB_ENV
       - name: Verify tag version number matches project.version
         id: verify_tag
         run: |
+          # extract just the version number from the tag name
+          TAG_VERSION_NUMBER=$(echo $GITHUB_REF_NAME | sed 's|.*/v||')
           # Extract project.version from pom.xml
-          PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          # Get the tag name
-          TAG_VERSION_NUMBER=${{ env.TAG_VERSION_NUMBER }}
+          PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f cli/demo/pom.xml)
           # Check if they match
           if [ "$PROJECT_VERSION" != "$TAG_VERSION_NUMBER" ]; then
             echo "Tag name ($TAG_VERSION_NUMBER) does not match project.version ($PROJECT_VERSION)"
