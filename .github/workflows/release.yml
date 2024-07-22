@@ -17,6 +17,18 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      - name: Extract tag
+        id: extract_tag
+        run: |
+          echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          echo "The value of TAG_NAME it $TAG_NAME"
+          echo "The value of GITHUB_REF_NAME is $GITHUB_REF_NAME"
+      # - name: Get project.version
+      #   # We get the current project.version
+      #   run: |
+      #     VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+      #     echo "project.version from pom: $VERSION"
+      #     echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Test
         run: mvn test -f cli/demo/pom.xml
       - name: Build
