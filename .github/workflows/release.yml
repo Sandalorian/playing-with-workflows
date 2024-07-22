@@ -20,18 +20,20 @@ jobs:
       - name: Extract tag
         id: extract_tag
         run: |
-          echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          echo "The value of TAG_NAME it ${{ env.TAG_NAME }}"
-      - name: Verify tag matches project.version
+          FULL_TAG_NAME=${GITHUB_REF##*/}
+          # extract just the version number from the tag
+          TAG_VERSION_NUMBER=$(echo $FULL_TAG_NAME | sed 's|.*/v||')
+          echo "TAG_VERSION_NUMBER=${TAG_VERSION_NUMBER}" >> $GITHUB_ENV
+      - name: Verify tag version number matches project.version
         id: verify_tag
         run: |
           # Extract project.version from pom.xml
           PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           # Get the tag name
-          TAG_NAME=${{ env.TAG_NAME }}
+          TAG_VERSION_NUMBER=${{ env.TAG_VERSION_NUMBER }}
           # Check if they match
-          if [ "$PROJECT_VERSION" != "$TAG_NAME" ]; then
-            echo "Tag name ($TAG_NAME) does not match project.version ($PROJECT_VERSION)"
+          if [ "$PROJECT_VERSION" != "$TAG_VERSION_NUMBER" ]; then
+            echo "Tag name ($TAG_VERSION_NUMBER) does not match project.version ($PROJECT_VERSION)"
             exit 1
           fi
         shell: bash
