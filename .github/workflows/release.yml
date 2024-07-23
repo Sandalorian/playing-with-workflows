@@ -37,12 +37,6 @@ jobs:
             exit 1
           fi
         shell: bash
-      # - name: Get project.version
-      #   # We get the current project.version
-      #   run: |
-      #     VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-      #     echo "project.version from pom: $VERSION"
-      #     echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Test
         run: mvn test -f $POM_FILE
       - name: Build
