@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - uses: actions/setup-java@v4
       with:
@@ -23,19 +23,19 @@ jobs:
         echo $PROJECT_VERSION
         echo "PROJECT_VERSION=${project_version}" >> $GITHUB_ENV
 
-    - name: Create release branch
-      run: |
-        release_branch="release-${PROJECT_VERSION}"
-        git checkout -b "${release_branch}"
-        echo "RELEASE_BRANCH=${release_branch}" >> $GITHUB_ENV
+    # - name: Create release branch
+    #   run: |
+    #     release_branch="release-${PROJECT_VERSION}"
+    #     git checkout -b "${release_branch}"
+    #     echo "RELEASE_BRANCH=${release_branch}" >> $GITHUB_ENV
 
-    - name: Update version to release candidate
-      run: |
-        sed -i "s/<version>${PROJECT_VERSION}<\/version>/<version>${PROJECT_VERSION}-rc<\/version>/" pom.xml
-        git add pom.xml
-        git commit -m "Update version to ${PROJECT_VERSION}-rc"
+    # - name: Update version to release candidate
+    #   run: |
+    #     sed -i "s/<version>${PROJECT_VERSION}<\/version>/<version>${PROJECT_VERSION}-rc<\/version>/" pom.xml
+    #     git add pom.xml
+    #     git commit -m "Update version to ${PROJECT_VERSION}-rc"
         
-    - name: Tag the release candidate
-      run: |
-        git tag "${PROJECT_VERSION}-rc"
-        git push origin "${RELEASE_BRANCH}" --tags
+    # - name: Tag the release candidate
+    #   run: |
+    #     git tag "${PROJECT_VERSION}-rc"
+    #     git push origin "${RELEASE_BRANCH}" --tags
