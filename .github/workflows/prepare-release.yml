@@ -3,6 +3,9 @@ name: Prepare Release
 on:
   workflow_call:
 
+env:
+  POM_FILE: 'cli/demo/pom.xml'
+  
 jobs:
   prepare-release:
     runs-on: ubuntu-latest
@@ -19,7 +22,8 @@ jobs:
     - name: Read version from pom.xml
       id: read_version
       run: |
-        project_version=$(xmllint --xpath "//*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
+        # Extract project.version from pom.xml
+        PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f $POM_FILE)  
         echo $PROJECT_VERSION
         echo "PROJECT_VERSION=${project_version}" >> $GITHUB_ENV
 
