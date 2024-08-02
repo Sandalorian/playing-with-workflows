@@ -1,0 +1,15 @@
+# Workflow triggered when an issue is opened
+name: Issue opened
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  start-prepare-release:
+    if: github.event.issue.title == 'Prepare Release'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: execute prepare release
+        uses: ./.github/workflows/prepare-release.yml
