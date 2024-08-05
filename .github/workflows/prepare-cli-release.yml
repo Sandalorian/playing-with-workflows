@@ -59,7 +59,7 @@ jobs:
       run: |
         sed -i "s/<version>${PROJECT_VERSION}<\/version>/<version>${RC_VERSION}<\/version>/" $POM_FILE
         git add $POM_FILE
-        git commit -m "Update version to ${RC_VERSION}"
+        git commit -m "Update version to ${RC_VERSION} for #${{ github.event.issue.number }}"
         
     - name: Tag the release candidate
       run: |
@@ -72,7 +72,23 @@ jobs:
         branch_url=https://github.com/${{ github.repository }}/tree/$RELEASE_BRANCH
         gh issue comment $ISSUE --body "Hello! Thank you for starting the release process.
         The release branch has been created: $branch_url
-        The release candidate tag is: `$RC_VERSION`"
+        The release candidate tag is: $RC_VERSION"
       env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE: ${{ github.event.issue.html_url }}
+      
+    - name: Create next version
+      run: |
+        version_parts=(${RELEASE_VERSION//./ })
+        version_major=${version_parts[0]}
+        version_minor=${version_parts[1]}
+        new_version="${version_major}.$((version_minor + 1))"
+        echo "New Version: $new_version"
+        echo "NEW_VERSION=${new_version}" >> $GITHUB_ENV
+        
+    # - name: Update pom.xml for next dev cycle
+    #   run: |
+    #     git checkout main
+    #     sed -i "s/<version>${PROJECT_VERSION}<\/version>/<version>${NEW_VERSION}<\/version>/" $POM_FILE
+    #     git add $POM_FILE
+    #     git commit -m "Update version to ${RC_VERSION}"
