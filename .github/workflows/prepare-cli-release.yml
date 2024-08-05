@@ -63,7 +63,7 @@ jobs:
         
     - name: Tag the release candidate
       run: |
-        git tag "${RC_VERSION}"
+        git tag "cli/${RC_VERSION}"
         git push origin "${RELEASE_BRANCH}" --tags
 
     - name: Update gh issue

@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "cli/v*.*"
+      
 env:
   POM_FILE: 'cli/demo/pom.xml'
 
@@ -22,13 +23,13 @@ jobs:
       - name: Extract tag
         id: extract_tag
         run: |
+          # extract just the version number from the tag name
+          tag_version_number=$(echo $GITHUB_REF_NAME | sed 's|.*/v||')
+          echo "TAG_VERSION_NUMBER=${tag_version_number}" >> $GITHUB_ENV
 
-          echo "TAG_VERSION_NUMBER=${TAG_VERSION_NUMBER}" >> $GITHUB_ENV
       - name: Verify tag version number matches project.version
         id: verify_tag
         run: |
-          # extract just the version number from the tag name
-          TAG_VERSION_NUMBER=$(echo $GITHUB_REF_NAME | sed 's|.*/v||')
           # Extract project.version from pom.xml
           PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f $POM_FILE)
           # Check if they match
