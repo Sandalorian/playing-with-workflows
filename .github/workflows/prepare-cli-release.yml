@@ -9,6 +9,8 @@ env:
 permissions:
   # required for pushing release branch
   contents: write
+  # require for commenting on issue
+  issues: write
 
 jobs:
   prepare-release:
@@ -25,7 +27,7 @@ jobs:
 
     - name: Setup git
       run: |
-        git config --global user.name "github-actions"
+        git config --global user.name "my-release-manager"
         git config --global user.email "username@users.noreply.github.com"
 
     - name: Read version from pom.xml
@@ -66,7 +68,10 @@ jobs:
 
     - name: Update gh issue
       run: |
-        gh issue comment $ISSUE --body "Thank you for opening this issue!"
+        echo "Issue URL: $ISSUE"
+        gh issue comment $ISSUE --body 'Hello! Thank you for starting the release process.
+        The release branch has been created: ${RELEASE_BRANCH}
+        The release candidate tag is: ${RC_VERSION}'
       env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE: ${{ github.event.issue.html_url }}

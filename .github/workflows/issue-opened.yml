@@ -11,4 +11,6 @@ jobs:
     permissions:
       # required for pushing release branch
       contents: write
+      # require for commenting on issue
+      issues: write
     uses: ./.github/workflows/prepare-cli-release.yml
