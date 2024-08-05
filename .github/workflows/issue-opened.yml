@@ -7,5 +7,5 @@ on:
 
 jobs:
   start-prepare-release:
-    if: github.event.issue.title == 'Prepare Release'
-    uses: ./.github/workflows/prepare-release.yml
+    if: github.event.issue.title == 'Prepare CLI Release'
+    uses: ./.github/workflows/prepare-cli-release.yml
