@@ -6,6 +6,10 @@ on:
 env:
   POM_FILE: 'cli/demo/pom.xml'
 
+permissions:
+  # required for pushing release branch
+  contents: write
+
 jobs:
   prepare-release:
     runs-on: ubuntu-latest
@@ -55,7 +59,7 @@ jobs:
         git add $POM_FILE
         git commit -m "Update version to ${RC_VERSION}"
         
-    # - name: Tag the release candidate
-    #   run: |
-    #     git tag "${PROJECT_VERSION}-rc"
-    #     git push origin "${RELEASE_BRANCH}" --tags
+    - name: Tag the release candidate
+      run: |
+        git tag "${RC_VERSION}"
+        git push origin "${RELEASE_BRANCH}" --tags
