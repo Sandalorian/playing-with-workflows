@@ -91,5 +91,5 @@ jobs:
         git checkout main
         sed -i "s/<version>${PROJECT_VERSION}<\/version>/<version>${NEW_VERSION}<\/version>/" $POM_FILE
         git add $POM_FILE
-        git commit -m "Update version to ${RC_VERSION} for #${{ github.event.issue.number }}"
+        git commit -m "Update version to ${NEW_VERSION} for #${{ github.event.issue.number }}"
         git push
