@@ -47,7 +47,7 @@ jobs:
     - name: Update pom.xml to release candidate
       run: |
         sed -i "s/<version>${PROJECT_VERSION}<\/version>/<version>${RC_VERSION}<\/version>/" $POM_FILE
-        git add pom.xml
+        git add $POM_FILE
         git commit -m "Update version to ${RC_VERSION}"
         
     # - name: Tag the release candidate
