@@ -86,9 +86,10 @@ jobs:
         echo "New Version: $new_version"
         echo "NEW_VERSION=${new_version}" >> $GITHUB_ENV
         
-    # - name: Update pom.xml for next dev cycle
-    #   run: |
-    #     git checkout main
-    #     sed -i "s/<version>${PROJECT_VERSION}<\/version>/<version>${NEW_VERSION}<\/version>/" $POM_FILE
-    #     git add $POM_FILE
-    #     git commit -m "Update version to ${RC_VERSION}"
+    - name: Update pom.xml for next dev cycle
+      run: |
+        git checkout main
+        sed -i "s/<version>${PROJECT_VERSION}<\/version>/<version>${NEW_VERSION}<\/version>/" $POM_FILE
+        git add $POM_FILE
+        git commit -m "Update version to ${RC_VERSION} for #${{ github.event.issue.number }}"
+        git push
