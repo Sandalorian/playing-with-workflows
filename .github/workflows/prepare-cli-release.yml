@@ -82,7 +82,7 @@ jobs:
         version_parts=(${RELEASE_VERSION//./ })
         version_major=${version_parts[0]}
         version_minor=${version_parts[1]}
-        new_version="${version_major}.$((version_minor + 1))"
+        new_version="${version_major}.$((version_minor + 1))-SNAPSHOT"
         echo "New Version: $new_version"
         echo "NEW_VERSION=${new_version}" >> $GITHUB_ENV
         
