@@ -51,7 +51,7 @@ jobs:
 
     - name: Create release branch
       run: |
-        release_branch="release/cli/${RELEASE_VERSION}"
+        release_branch="release/cli/v${RELEASE_VERSION}"
         git checkout -b "${release_branch}"
         echo "RELEASE_BRANCH=${release_branch}" >> $GITHUB_ENV
 
@@ -63,7 +63,7 @@ jobs:
         
     - name: Tag the release candidate
       run: |
-        git tag "cli/${RC_VERSION}"
+        git tag "cli/v${RC_VERSION}"
         git push origin "${RELEASE_BRANCH}" --tags
 
     - name: Update gh issue
