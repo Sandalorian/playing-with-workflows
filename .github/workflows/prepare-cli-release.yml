@@ -40,15 +40,15 @@ jobs:
 
     - name: Create release branch
       run: |
-        release_branch="release/cli/${PROJECT_VERSION}"
+        release_branch="release/cli/${RELEASE_VERSION}"
         git checkout -b "${release_branch}"
         echo "RELEASE_BRANCH=${release_branch}" >> $GITHUB_ENV
 
-    # - name: Update version to release candidate
-    #   run: |
-    #     sed -i "s/<version>${PROJECT_VERSION}<\/version>/<version>${PROJECT_VERSION}-rc<\/version>/" pom.xml
-    #     git add pom.xml
-    #     git commit -m "Update version to ${PROJECT_VERSION}-rc"
+    - name: Update pom.xml to release candidate
+      run: |
+        sed -i "s/<version>${PROJECT_VERSION}<\/version>/<version>${RC_VERSION}<\/version>/" $POM_FILE
+        git add pom.xml
+        git commit -m "Update version to ${RC_VERSION}"
         
     # - name: Tag the release candidate
     #   run: |
