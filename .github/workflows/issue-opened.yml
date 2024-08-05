@@ -8,4 +8,7 @@ on:
 jobs:
   start-prepare-release:
     if: github.event.issue.title == 'Prepare CLI Release'
+    permissions:
+      # required for pushing release branch
+      contents: write
     uses: ./.github/workflows/prepare-cli-release.yml
