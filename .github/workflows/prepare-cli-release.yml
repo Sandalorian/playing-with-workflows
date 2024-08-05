@@ -69,9 +69,10 @@ jobs:
     - name: Update gh issue
       run: |
         echo "Issue URL: $ISSUE"
+        branch_url=https://github.com/${{ github.repository }}/tree/$RELEASE_BRANCH
         gh issue comment $ISSUE --body "Hello! Thank you for starting the release process.
-        The release branch has been created: $RELEASE_BRANCH
-        The release candidate tag is: $RC_VERSION"
+        The release branch has been created: $branch_url
+        The release candidate tag is: `$RC_VERSION`"
       env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE: ${{ github.event.issue.html_url }}
