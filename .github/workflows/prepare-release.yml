@@ -25,16 +25,16 @@ jobs:
         # Extract project.version from pom.xml
         PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f $POM_FILE)  
         echo $PROJECT_VERSION
-        echo "PROJECT_VERSION=${project_version}" >> $GITHUB_ENV
+        echo "PROJECT_VERSION=${PROJECT_VERSION}" >> $GITHUB_ENV
 
     - name: Create release candidate version
       id: rc_version
       run: |
         # Use PROJECT_VERSION to create a release candidate
-        echo $PROJECT_VERSION
+        echo "Project version: $PROJECT_VERSION"  
         RC_VERSION=$(echo $PROJECT_VERSION | awk -F"-" '{print $1}')
-        echo RC_VERSION
-        echo "RC_VERSION=${rc_version}" >> $GITHUB_ENV
+        echo $RC_VERSION
+        echo "RC_VERSION=${RC_VERSION}" >> $GITHUB_ENV
 
     - name: Create release branch
       run: |
